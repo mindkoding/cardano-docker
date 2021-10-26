@@ -1,0 +1,23 @@
+#docker run -it --entrypoint cardano-node inputoutput/cardano-node run --config /conf/testnet-config.json --topology /conf/testnet-topology.json
+version: "3.9"
+
+services:
+  node:
+    image: inputoutput/cardano-node
+    volumes:
+      - ./volumes/ipc:/ipc
+      - ./volumes/data:/data
+      - ./conf:/conf
+    environment:
+      - NETWORK=testnet-magic
+      - CARDANO_NODE_SOCKET_PATH=/ipc/xpto.socket
+    entrypoint: ["cardano-node", "run", "--config", "/conf/testnet-config.json", "--topology", "/conf/testnet-topology.json", "--socket-path", "/ipc/node.socket"]
+
+  cli:
+    image: inputoutput/cardano-node
+    environment:
+      - NETWORK=testnet-magic
+      - CARDANO_NODE_SOCKET_PATH=/ipc/node.socket
+    volumes:
+      - ./volumes/ipc:/ipc
+    entrypoint: ["cardano-cli"]
